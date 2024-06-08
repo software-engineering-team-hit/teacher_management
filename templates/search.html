@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>教师查询系统</title>
+</head>
+<body>
+    <h1>教师查询系统</h1>
+    <form id="queryForm">
+        <label for="queryType">选择查询类型:</label>
+        <select id="queryType" name="queryType">
+            <option value="id">按ID查询</option>
+            <option value="name">按姓名查询</option>
+            <option value="academy">按学院查询</option>
+        </select>
+
+        <br><br>
+
+        <label for="queryValue">输入查询值:</label>
+        <input type="text" id="queryValue" name="queryValue">
+
+        <br><br>
+
+        <button type="button" onclick="sendQuery()">查询</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        function sendQuery() {
+            var queryType = document.getElementById('queryType').value;
+            var queryValue = document.getElementById('queryValue').value;
+            var resultDiv = document.getElementById('result');
+
+            // 根据选择的查询类型构建请求URL
+            var url = '';
+            if (queryType === 'id') {
+                url = `/get_teacher_by_id/${queryValue}`;
+            } else if (queryType === 'name') {
+                url = `/get_teacher_by_name/${encodeURIComponent(queryValue)}`;
+            } else if (queryType === 'academy') {
+                url = `/get_teacher_by_academy/${encodeURIComponent(queryValue)}`;
+            }
+
+            // 发送GET请求到后端
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    resultDiv.innerHTML = JSON.stringify(data, null, 2); // 展示查询结果
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = '查询失败: ' + error;
+                });
+        }
+    </script>
+</body>
+</html>
