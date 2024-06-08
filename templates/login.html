@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <div id="message"></div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: username, password: password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                var messageDiv = document.getElementById('message');
+                messageDiv.textContent = data.message;
+
+                if (response.status === 200) {
+                    // 登录成功
+                    messageDiv.style.color = 'green';
+                } else if (response.status === 401) {
+                    // 密码错误
+                    messageDiv.style.color = 'red';
+                } else if (response.status === 404) {
+                    // 用户不存在
+                    messageDiv.style.color = 'red';
+                }
+            })
+            .catch(error => console.error(error));
+        });
+    </script>
+</body>
+</html>
