@@ -1,17 +1,24 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <title>self-informatoin update</title>
-    </head>
-    <body>
-        <form action="XXX.php" method="get">
-            academy:<input type="text" name="academy" value="your academy" /><br />
-            information:<input type="text" name="info" value="introduce yourself" /><br />
-            name:<input type="text" name="name" value="your name" /><br />
-            url:<input type="text" name="url" value="your personal homepage"><br />
-            photo:<input type="file" name="photo" /><br />
-            <input type="submit" value="submit" />
-            <input type="reset" value="reset" />
-        </form>
-    </body>
+<head>
+    <title>Update Teacher</title>
+</head>
+<body>
+    <h1>Update Teacher Information</h1>
+    <form method="POST" action="{{ url_for('update_teacher') }}">
+        <label for="id">Teacher ID:</label>
+        <input type="text" id="id" name="id" required>
+        <br>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name">
+        <br>
+        <label for="academy">Academy:</label>
+        <input type="text" id="academy" name="academy">
+        <br>
+        <label for="url">URL:</label>
+        <input type="text" id="url" name="url">
+        <br>
+        <button type="submit">Update</button>
+    </form>
+</body>
 </html>
