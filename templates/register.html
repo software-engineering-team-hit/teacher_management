@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration</title>
+    <!-- 引入 jQuery 库 用于处理 AJAX 请求 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Register</h1>
+    <!-- 注册表单 -->
+    <form id="registration-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username"><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email"><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password"><br>
+        <!-- 提交表单的按钮 -->
+        <button type="submit">Register</button>
+    </form>
+
+    <!-- 注册状态显示区域 -->
+    <div id="registration-status"></div>
+
+    <script>
+        //在页面加载完成后执行的 jQuery 代码块
+        $(document).ready(function() {
+            // 为注册表单的提交事件绑定处理函数
+            $('#registration-form').submit(function(event) {
+                event.preventDefault(); // 阻止默认的表单提交行为,改为使用 AJAX 提交
+
+                // 获取表单数据 组成一个 JavaScript 对象
+                var formData = {
+                    username: $('#username').val(),
+                    email: $('#email').val(),
+                    password: $('#password').val()
+                };
+
+                // 使用 AJAX 发送 POST 注册请求到 /register 路由
+                $.ajax({
+                    type: 'POST',
+                    url: '/register',
+                    data: formData,
+                    success: function(data) {
+                        // 请求成功时，显示成功消息
+                        $('#registration-status').text(data.message);
+                    },
+                    error: function(xhr, status, error) {
+                        // 注册失败时,显示失败消息
+                        $('#registration-status').text('Registration failed: ' + error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
