@@ -32,28 +32,29 @@ class Teacher:
     def get_teacher_by_name(cls, name, teachers_data):
         teachers={}
         for teacher in teachers_data:
-            if (teachers.get(teacher["name"])!=None):
-                newvalue=teachers[teacher["name"]]
+            tmp=teacher.get("name")
+            if (teachers.get(tmp)!=None):
+                newvalue=teachers[tmp]
                 newvalue.append(teacher)
                 print(newvalue)
-                teachers[teacher["name"]]=newvalue
+                teachers[tmp]=newvalue
                 #print(teachers[teacher["name"]])
             else:
-                teachers[teacher["name"]]=[teacher]
+                teachers[tmp]=[teacher]
         return teachers.get(name)
 
     @classmethod
     def get_teacher_by_academy(cls, academy, teachers_data):
         teachers={}
         for teacher in teachers_data:
-            if (teachers.get(teacher["academy"])!=None):
-                newvalue=teachers[teacher["academy"]]
+            tmp= teacher.get("academy")
+            if (teachers.get(tmp) != None):
+                newvalue = teachers[tmp]
                 newvalue.append(teacher)
-                print(newvalue)
-                teachers[teacher["academy"]]=newvalue
-                #print(teachers[teacher["name"]])
+                #print(newvalue)
+                teachers[tmp] = newvalue
+                # print(teachers[teacher["name"]])
             else:
-                teachers[teacher["academy"]]=[teacher]
-        return teachers.get(academy)
+                teachers[tmp] = [teacher]
     # 定义其他类方法，例如添加、更新、删除教师等..
 teachers = Teacher.load_teachers()
