@@ -3,9 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <title>教师查询系统</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .search-form {
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: calc(100% - 22px); /* Input padding and border */
+        }
+        .search-button {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .search-button:hover {
+            background-color: #4cae4c;
+        }
+         .teacher-list {
+            margin-top: 20px;
+            list-style: none;
+            padding: 0;
+        }
+        .teacher-item {
+            background: white;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .teacher-item h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .teacher-item p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .teacher-item a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .teacher-item a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h1>教师查询系统</h1>
+    <div class="container">
+        <h1>教师查询系统</h1>
+        <!-- Search form should be here -->
+    </div>
+</body>
+</html>
+</head>
+<body>
     <form id="queryForm">
         <label for="queryType">选择查询类型:</label>
         <select id="queryType" name="queryType">
@@ -35,19 +114,33 @@
             // 根据选择的查询类型构建请求URL
             var url = '';
             if (queryType === 'id') {
-                url = `/get_teacher_by_id/${queryValue}`;
+                url = `/search/get_teacher_by_id/${queryValue}`;
             } else if (queryType === 'name') {
-                url = `/get_teacher_by_name/${encodeURIComponent(queryValue)}`;
+                url = `/search/get_teacher_by_name/${encodeURIComponent(queryValue)}`;
             } else if (queryType === 'academy') {
-                url = `/get_teacher_by_academy/${encodeURIComponent(queryValue)}`;
+                url = `/search/get_teacher_by_academy/${encodeURIComponent(queryValue)}`;
             }
 
             // 发送GET请求到后端
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    resultDiv.innerHTML = JSON.stringify(data, null, 2); // 展示查询结果
+                    var teachers = JSON.parse(JSON.stringify(data, null, 2)); // 展示查询结果
+                    for (let i = 0; i < teachers.length; i++) {
+                        var teacherItem = document.createElement('div');
+                        teacherItem.innerHTML = `
+                             <h3>${teachers[i].name}</h3>
+                             <p>ID: ${teachers[i].id}</p>
+                             <p>学院: ${teachers[i].academy}</p>
+                             <p>个人主页: <a href="${teachers[i].url}" target="_blank">访问</a></p>
+                             <p>简介: ${teachers[i].information}</p>
+                          `;
+                        resultDiv.appendChild(teacherItem);
+                    }
                 })
+
+                 // 展示查询结果
+
                 .catch(error => {
                     resultDiv.innerHTML = '查询失败: ' + error;
                 });
