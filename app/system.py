@@ -128,7 +128,45 @@ def get_teacher_by_academy(academy):
     else:
         return jsonify({"error": "Teachers not found"}), 404
 # 特定搜索方式的路由
+@app.route('/update_teacher', methods=['GET','POST'])
+def update_teacher():
+    teachers = Teacher.load_teachers()
+    if request.method == 'POST':
+        id = int(request.form['id'])
+        new =1
+        name = request.form['name']
+        academy = request.form['academy']
+        url = request.form['url']
+        information = request.form['info']
+        # 找到要更新的教师对象
+        for teacher in teachers:
+            if str(teacher["id"]) == id:
+                print("成功匹配")
+                teacher["name"] = name
+                teacher["academy"] = academy
+                teacher["url"] = url
+                teacher['information']=information
+                new = 0
+                break
+        if new == 0:
+            Teacher.save_teachers(teachers)
+            return  jsonify({"success":"update successfully"}),200
+        else:
+            teacher1={}
+            teacher1["id"] = int(id)
+            teacher1["name"] = name
+            teacher1["academy"] = academy
+            teacher1["url"] = url
+            teacher1['information'] = information
+            teachers.append(teacher1)
+            print(teachers)
+            Teacher.save_teachers(teachers)
+            return jsonify({"success": "add successfully"}), 200
 
+        # 保存更新后的教师数据
+
+    else:
+        return render_template('update.html')        #return redirect(url_for('index'))
 
 # 运行 Flask 应用
 if __name__ == '__main__':
