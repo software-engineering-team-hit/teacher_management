@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Self-information Update</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            width: calc(100% - 22px); /* Input padding and border */
+        }
+        input[type="submit"],
+        input[type="reset"] {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover,
+        input[type="reset"]:hover {
+            background-color: #4cae4c;
+        }
+    </style>
+    <script>
+        $(document).ready(function() {
+        // 为更新表单的提交事件绑定处理函数
+        $('#update-form').submit(function(event) {
+            event.preventDefault(); // 阻止默认的表单提交行为,改为使用 AJAX 提交
+
+            // 获取表单数据 组成一个 JavaScript 对象
+            var formData = {
+                id: $('#id').val(),
+                academy: $('#academy').val(),
+                info: $('#info').val(),
+                name: $('#name').val(),
+                url: $('#url').val()
+            };
+
+            // 使用 AJAX 发送 POST 更新请求到 /update-teacher-info 路由
+            $.ajax({
+                type: 'POST',
+                url: '/update_teacher',
+                data: formData,
+                success: function(data) {
+                    // 请求成功时，显示成功消息
+                    $('#update-status').text(data.message);
+                },
+                error: function(xhr, status, error) {
+                    // 更新失败时,显示失败消息
+                    $('#update-status').text('Update failed: ' + error);
+                }
+            });
+        });
+    });
+    </script>
+</head>
+<body>
+    <form id="update" action="/update_teacher" method="post">
+    <!-- 教师ID -->
+    <label for="id">ID:</label>
+    <input type="text" id="id" name="id" value="your id" required><br>
+
+    <!-- 学院 -->
+    <label for="academy">Academy:</label>
+    <input type="text" id="academy" name="academy" value="your academy" required><br>
+
+    <!-- 个人信息 -->
+    <label for="info">Information:</label>
+    <textarea id="info" name="info" required>introduce yourself</textarea><br>
+
+    <!-- 姓名 -->
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" value="your name" required><br>
+
+    <!-- 个人主页URL -->
+    <label for="url">URL:</label>
+    <input type="url" id="url" name="url" value="your personal homepage" required><br>
+
+    <!-- 提交表单的按钮 -->
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>

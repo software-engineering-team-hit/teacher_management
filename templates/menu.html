@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .menu-container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container">
+        <h1>Menu</h1>
+        <nav>
+            <a href="/search" class="button">Search</a>
+            <a href="/update_teacher" class="button">Update</a>
+            <a href="/statistics" class="button">Statistics</a>
+        </nav>
+         <div id="user-info">
+            <h2>Welcome, {{ name }}!</h2>
+            <p>Your identity: {{ identify }}</p>
+             {% if error_message == 'no_permission' %}
+            <p>你没有修改的权限，请切换教师账号!</p>
+        {% endif %}
+        </div>
+    </div>
+</body>
+</html>

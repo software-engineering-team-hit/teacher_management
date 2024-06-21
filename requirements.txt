@@ -1,0 +1,7 @@
+python >= 3.8
+flask
+flask_wtf
+json
+os
+wtforms
+werkzeug.security

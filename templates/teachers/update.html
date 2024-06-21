@@ -1,17 +1,46 @@
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <title>self-informatoin update</title>
-    </head>
-    <body>
-        <form action="XXX.php" method="get">
-            academy:<input type="text" name="academy" value="your academy" /><br />
-            information:<input type="text" name="info" value="introduce yourself" /><br />
-            name:<input type="text" name="name" value="your name" /><br />
-            url:<input type="text" name="url" value="your personal homepage"><br />
-            photo:<input type="file" name="photo" /><br />
-            <input type="submit" value="submit" />
-            <input type="reset" value="reset" />
-        </form>
-    </body>
+<head>
+    <meta charset="utf-8" />
+    <title>Self-information Update</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.querySelector('#selfInfoForm');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // 阻止表单的默认提交行为
+
+                var formData = new FormData(form);
+                // 可以转换为对象，如果需要发送 JSON 格式的数据
+                var objectData = Object.fromEntries(formData);
+
+                fetch('/update', {
+                    method: 'POST', // 通常表单提交是 GET，但这里我们用 POST
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(objectData) // 发送 JSON 格式的数据
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    // 这里可以添加提交成功后的逻辑，比如显示消息
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    // 这里可以添加错误处理逻辑
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <form id="selfInfoForm" action="/update" method="post">
+        Academy:<input type="text" name="academy" value="your academy" /><br />
+        Information:<input type="text" name="info" value="introduce yourself" /><br />
+        Name:<input type="text" name="name" value="your name" /><br />
+        URL:<input type="text" name="url" value="your personal homepage" /><br />
+        Photo:<input type="file" name="photo" /><br />
+        <input type="submit" value="Submit" />
+        <input type="reset" value="Reset" />
+    </form>
+</body>
 </html>

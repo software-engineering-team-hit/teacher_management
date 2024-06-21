@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify,redirect
 import json
 from werkzeug.security import check_password_hash
 
-app = Flask(__name__,template_folder='F:\\2024_code\\software\\teacher_management\\templates')
+app = Flask(__name__,template_folder='E:\\csnerwork\\teacher_management\\templates')
 
 # 从 user.json 文件中读取用户数据
-with open('register_users.json', 'r') as f:
+with open('E:\\csnerwork\\teacher_management\\register_users.json', 'r') as f:
     users = json.load(f)
 
 @app.route('/')
@@ -25,13 +25,17 @@ def login():
 
     if user and check_password_hash(user['password'], password):
         # 登录成功,返回成功信息
-        return jsonify({'message': 'Login successful'})
+        return jsonify({'message': 'login successful'}), 200
     elif user:
         # 用户名存在但密码错误
         return jsonify({'message': 'Invalid password'}), 401
     else:
         # 用户名不存在
         return jsonify({'message': 'User does not exist'}), 404
+@app.route('/menu',methods=['GET'])
+def menu():
+        # 渲染搜索页面
+    return render_template('menu.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

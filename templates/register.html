@@ -4,6 +4,62 @@
     <title>Registration</title>
     <!-- 引入 jQuery 库 用于处理 AJAX 请求 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .registration-container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        #registration-status {
+            margin-top: 15px;
+            height: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>Register</h1>
@@ -17,6 +73,9 @@
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password"><br>
+        <label>Identity:</label><br>
+        <label><input type="radio" name="identify" value="teacher" > Teacher</label>
+        <label><input type="radio" name="identify" value="student"> Student</label><br><br>
         <!-- 提交表单的按钮 -->
         <button type="submit">Register</button>
     </form>
@@ -28,14 +87,19 @@
         //在页面加载完成后执行的 jQuery 代码块
         $(document).ready(function() {
             // 为注册表单的提交事件绑定处理函数
-            $('#registration-form').submit(function(event) {
-                event.preventDefault(); // 阻止默认的表单提交行为,改为使用 AJAX 提交
-
+            $('#registration-form').submit(function (event) {
+                // 阻止表单的默认提交行为
+                event.preventDefault();
+                var identify = '';
+                if ($('input[name="identify"]').is(':checked')) {
+                    identify = $('input[name="identify"]:checked').val();
+                }
                 // 获取表单数据 组成一个 JavaScript 对象
                 var formData = {
                     username: $('#username').val(),
                     email: $('#email').val(),
-                    password: $('#password').val()
+                    password: $('#password').val(),
+                    identify: identify
                 };
 
                 // 使用 AJAX 发送 POST 注册请求到 /register 路由
@@ -43,11 +107,15 @@
                     type: 'POST',
                     url: '/register',
                     data: formData,
-                    success: function(data) {
+                    success: function (data) {
                         // 请求成功时，显示成功消息
                         $('#registration-status').text(data.message);
+                        if (data.message === 'Registration successful!') {
+                            window.location.href = '/menu';
+                        }
+
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         // 注册失败时,显示失败消息
                         $('#registration-status').text('Registration failed: ' + error);
                     }

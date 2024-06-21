@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>教师查询系统 - 访问统计</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>教师查询系统</h1>
+        <h2>访问次数统计</h2>
+        <canvas id="teacherVisitChart" width="800" height="400"></canvas>
+    </div>
+
+    <!-- 引入Chart.js库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+
+    <script>
+        // 假设这是从服务器获取的教师访问次数数据
+        var teacherVisitData = [
+            { name: "教师A", times: 150 },
+            { name: "教师B", times: 120 },
+            // ...其他教师数据
+        ];
+
+        // 页面加载完毕后绘制图表
+        window.onload = function() {
+            var ctx = document.getElementById('teacherVisitChart').getContext('2d');
+            var visitChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: teacherVisitData.map(teacher => teacher.name),
+                    datasets: [{
+                        label: '访问次数',
+                        data: teacherVisitData.map(teacher => teacher.times),
+                        backgroundColor: 'rgba(0,123,255,0.5)',
+                        borderColor: 'rgba(0,123,255,1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
