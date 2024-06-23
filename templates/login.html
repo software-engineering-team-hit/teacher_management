@@ -91,13 +91,18 @@
                 var messageDiv = document.getElementById('message');
                 messageDiv.textContent = data.message;
 
-                if (data.message === 'login successful') {
+                if (data.message === 'login successful,student') {
                     // 登录成功
 
                     messageDiv.style.color = 'green';
                     window.location.href = '/menu';
 
-                } else if (response.status === 401) {
+                }else if(data.message === 'login successful,teacher')
+                    {
+                    messageDiv.style.color = 'green';
+                    window.location.href = '/teacher';
+                }
+                else if (response.status === 401) {
                     // 密码错误
                     messageDiv.style.color = 'red';
                 } else if (response.status === 404) {

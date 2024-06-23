@@ -94,3 +94,35 @@ class Teacher:
     # 定义其他类方法，例如添加、更新、删除教师等..
 #teachers = Teacher.load_teachers()
 #print(Teacher.get_teacher_by_academy("计算学部",teachers))
+class Appointment:
+    def __init__(self, student_name, academy, purpose, teacher_id, date, time, is_accepted=False):
+        self.student_name = student_name
+        self.academy = academy
+        self.purpose = purpose
+        self.teacher_id = teacher_id
+        self.date = date
+        self.time = time
+        self.is_accepted = is_accepted
+
+    @staticmethod
+    def load_appointments():
+        try:
+            with open("E:\\csnerwork\\teacher_management\\appointment.json", 'r', encoding='utf-8') as file:#绝对路径，相对路径好像有点问题
+                appointments_data = json.load(file)
+                return appointments_data
+        except FileNotFoundError:
+            return {}
+
+    @staticmethod
+    def save_appointment(appointment):
+        with open("E:\\csnerwork\\teacher_management\\appointment.json", 'w', encoding='utf-8') as file:
+            json.dump(appointment, file)
+
+    @staticmethod
+    def check_conflict(teacher_id, date, time):
+        # 检查预约时间是否冲突
+        appointments = Appointment.load_appointments()
+        for app in appointments:
+            if app.teacher_id == teacher_id and app.date == date and app.time == time:
+                return True
+        return False

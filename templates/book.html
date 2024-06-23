@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Appointment</title>
+    <!-- 引入 jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h1>Appointment</h1>
+
+<form id="bookForm">
+    <label for="studentName">Student Name:</label>
+    <input type="text" id="studentName" name="studentName" required>
+    
+    <label for="academy">Academy:</label>
+    <input type="text" id="academy" name="academy" required>
+    
+    <label for="purpose">Purpose:</label>
+    <textarea id="purpose" name="purpose" required></textarea>
+    
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date" required>
+    
+    <label for="time">Time:</label>
+    <input type="time" id="time" name="time" required>
+    
+    <input type="hidden" id="teacher_id" name="teacher_id" value="1">
+    <button type="submit" id="bookTeacher">Book Appointment</button>
+</form>
+
+<!-- <div id="message"></div> -->
+
+<script>
+    // JavaScript 代码来处理按钮点击事件
+    $(document).ready(function() {
+        $('#bookTeacher').click(function() {
+            // 获取表单数据
+            var bookItem = {
+                studentName: $('#studentName').val(),
+                academy: $('#academy').val(),
+                purpose: $('#purpose').val(),
+                date: $('#date').val(),
+                time: $('#time').val(),
+                teacherId: $('#teacherId').val(),
+            };
+    
+    
+            // 发送 POST 请求到后端
+            $.ajax({
+                url: '/teacher/' + $('#teacher_id').val() + '/book',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(bookItem),
+                success: function(response) {
+                    console.log(response.message);
+                    alert(response.message);
+                },
+                error: function(xhr) {
+                    console.error(xhr.responseText);
+                    alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
+
+

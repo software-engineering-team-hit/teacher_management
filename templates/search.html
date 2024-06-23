@@ -132,6 +132,7 @@
                 url = `/search/get_teacher_by_academy/${encodeURIComponent(queryValue)}`;
             }
 
+
             // 发送GET请求到后端
             fetch(url)
                 .then(response => response.json())
@@ -153,6 +154,8 @@
                              <p>个人主页: <a href="${teachersData[i].url}" target="_blank">访问</a></p>
                              <p>简介: ${teachersData[i].information}</p>
                              <p>被查询次数: ${teachersData[i].times}</p>
+                           <button onclick="redirectToschedule(${teachersData[i].id})">查看教师日程</button>
+                           <button onclick="redirectTobook(${teachersData[i].id})">申请预约</button>
 
                           `;
                         resultDiv.appendChild(teacherItem);
@@ -164,6 +167,12 @@
                 .catch(error => {
                     resultDiv.innerHTML = '查询失败: ' + error;
                 });
+        }
+        function redirectToschedule(id) {
+         window.location.href = `/teacher/${id}/schedule`; // 假设详情页面的URL是 /profile/:id
+          }
+        function redirectTobook(id) {
+            window.location.href = `/teacher/${id}/book`; // 假设编辑页面的URL是 /edit/:id
         }
 
     </script>

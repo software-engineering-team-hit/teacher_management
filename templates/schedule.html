@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Teacher Schedule</title>
+</head>
+<body>
+
+<h1>Teacher Schedule</h1>
+
+{% if schedule %}
+    <ul>
+    {% for item in schedule %}
+        <li>
+            <strong>Date:</strong> {{ item.date }}<br>
+            <strong>Time:</strong> {{ item.time }}<br>
+            <strong>Event:</strong> {{ item.event }}
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No schedule information available.</p>
+{% endif %}
+
+</body>
+</html>

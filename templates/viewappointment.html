@@ -1,0 +1,40 @@
+<!-- templates/viewappointment.html -->
+{% extends "layout.html" %}
+{% block title %}View Appointments{% endblock %}
+
+{% block content %}
+    <h1>My Appointments</h1>
+
+    {% if result|length == 0 %}
+        <p>No appointments found.</p>
+    {% else %}
+        <table border="1">
+            <tr>
+                <th>Student Name</th>
+                <th>Academy</th>
+                <th>Purpose</th>
+                <th>Teacher ID</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+            {% for appointment in result %}
+                <tr>
+                    <td>{{ appointment.studentName }}</td>
+                    <td>{{ appointment.academy }}</td>
+                    <td>{{ appointment.purpose }}</td>
+                    <td>{{ appointment.teacherId }}</td>
+                    <td>{{ appointment.date }}</td>
+                    <td>{{ appointment.time }}</td>
+                    <td>
+                        {% if appointment.is_accepted %}
+                            Accepted
+                        {% else %}
+                            Pending
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

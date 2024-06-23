@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Teacher Schedule</title>
+    <!-- 引入 jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h1>Update Teacher Schedule</h1>
+
+<!-- 表单，包括日期、起始时间、终止时间和事件 -->
+<form id="scheduleForm">
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date" required><br><br>
+    
+    <label for="startTime">Start Time:</label>
+    <input type="time" id="startTime" name="startTime" required><br><br>
+    
+    <label for="endTime">End Time:</label>
+    <input type="time" id="endTime" name="endTime" required><br><br>
+    
+    <label for="event">Event:</label>
+    <input type="text" id="event" name="event" required><br><br>
+
+    <!-- 教师ID应该从URL或页面的其它部分获取 -->
+    <button type="button" id="updateSchedule">Update Schedule</button>
+</form>
+
+<script>
+// JavaScript 代码来处理按钮点击事件
+$(document).ready(function() {
+    $('#updateSchedule').click(function() {
+        // 获取表单数据
+        var scheduleItem = {
+            date: $('#date').val(),
+            time: $('#startTime').val() + ' - ' + $('#endTime').val(),
+            event: $('#event').val()
+        };
+        var teacher_name = '{{ teacher_name }}';
+        // 将单个日程项放入数组中，以便与后端的预期格式匹配
+        var scheduleData = {
+            schedule: [scheduleItem]
+        };
+        // 发送 POST 请求到后端
+
+        $.ajax({
+            url: '/teacher/' +encodeURIComponent(teacher_name) +'/schedule_update',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(scheduleData),
+            success: function(response) {
+                console.log(response.message);
+                alert(response.message);
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

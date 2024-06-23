@@ -4,13 +4,19 @@ import os
 from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__,template_folder='E:\\csnerwork\\teacher_management\\templates')
 app.secret_key = 'teachermanagement'
-from model import Teacher
+from model import Teacher,Appointment
 # 假设这是你的登录和注册页面模板
 @app.route('/',)
 def index():
     # 根据查询参数或其他逻辑决定渲染登录还是注册页面
     return render_template('start.html')
 
+@app.route('/teacher',)
+def teacher():
+    user_name = session.get('username', 'Guest')  # 如果没有找到name，默认为'Guest'
+    user_identify = session.get('identify', 'Unknown')  # 如果没有找到
+    error_message = request.args.get('error')
+    return render_template('teacher.html', name=user_name, identify=user_identify, error_message=error_message)
 # 登录路由
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -29,7 +35,10 @@ def login():
             session['username'] = username
             session['identify'] = user['identify']
             # 登录成功,返回成功信息
-            return jsonify({'message': 'login successful'}), 200
+            if session['identify'] =="teacher":
+                return jsonify({'message': 'login successful,teacher'}), 200
+            else:
+                return jsonify({'message': 'login successful,student'}), 200
             #return redirect(url_for('menu'))
         elif user:
             # 用户名存在但密码错误
@@ -184,6 +193,92 @@ def update_teacher():
         # 用户不是老师或者没有登录，显示错误消息并重定向
         return redirect(url_for('menu', error='no_permission'))
 
+
+@app.route('/teacher/<int:teacher_id>/book', methods=['GET', 'POST'])
+def book_teacher(teacher_id):
+    if request.method == 'POST':
+        data = request.json
+
+        # 检查时间冲突的逻辑（已注释）
+        # if Appointment.check_conflict(teacher_id, data.get('date'), data.get('time')):
+        #     return jsonify({"error": "Time conflict, please choose another time"}), 409
+
+        # 构造字典
+        appointment_dict = {
+            'studentName': data.get('studentName'),
+            'academy': data.get('academy'),
+            'purpose': data.get('purpose'),
+            'teacherId': teacher_id,
+            'date': data.get('date'),
+            'time': data.get('time'),
+            'is_accepted': False
+        }
+        print(appointment_dict)
+
+        try:
+            appointments = Appointment.load_appointments()
+            appointments.append(appointment_dict)
+        except json.decoder.JSONDecodeError:
+            appointments = []
+            appointments.append(appointment_dict)
+
+        Appointment.save_appointment(appointments)
+
+        return jsonify({"message": "预约信息已经发给教师，等待确认", "appointment": appointment_dict}), 201
+
+    else:
+        return render_template('book.html')
+@app.route('/teacher/<int:teacher_id>/schedule', methods=['GET'])
+def get_teacher_schedule(teacher_id):
+    teachers = Teacher.load_teachers()
+    teacher = Teacher.get_teacher_by_id(teacher_id, teachers)
+    if teacher:
+        # 假设我们只返回第一个教师的日程信息
+        teacher = Teacher.get_teacher_by_id(teacher_id, teachers)
+        print(teacher)
+        teacher_schedule = teacher[0]["schedule"]
+        return render_template('schedule.html',schedule=teacher_schedule)
+
+    else:
+        return jsonify({"error": "Teacher not found"}), 404
+@app.route('/teacher/<string:teacher_name>/schedule_update', methods=['GET', 'POST'])
+def update_teacher_schedule(teacher_name):
+    user_name = session.get('username', 'Guest')  # 如果没有找到name，默认为'Guest'
+    user_identify = session.get('identify', 'Unknown')  # 如果没有找到
+    error_message = request.args.get('error')
+    teachers = Teacher.load_teachers()
+    if request.method == 'POST':
+        teacher = Teacher.get_teacher_by_name(user_name, teachers)
+        if teacher:
+            # 假设请求的数据格式是 {'schedule': [{'date': '...', 'time': '...', 'event': '...'}]}
+            data = request.json
+            if 'schedule' in teacher[0]:
+                schedule_teacher=data.get('schedule')
+                teacher[0]['schedule'].append(schedule_teacher[0])
+                Teacher.save_teachers(teachers)
+                return jsonify({"message": "Schedule updated successfully"}), 200
+            else:
+                teacher[0]['schedule'] = data.get('schedule')
+                Teacher.save_teachers(teachers)
+                return jsonify({"message": "Schedule updated successfully"}), 200
+        else:
+            return jsonify({"error": "Teacher not found"}), 404
+    else:
+        return render_template('schedule_update.html',teacher_name=user_name, identify=user_identify, error_message=error_message)
+@app.route('/menu/<string:student_name>/viewappointment', methods=['GET', 'POST'])
+def view(student_name):
+    user_name = session.get('username', 'Guest')  # 如果没有找到name，默认为'Guest'
+    user_identify = session.get('identify', 'Unknown')  # 如果没有找到
+    error_message = request.args.get('error')
+    all = Appointment.load_appointments()
+    result = []
+    for each in all:
+        if each["studentName"] == user_name:
+            result.append(each)
+    if result==[]:
+        return jsonify({"message": "no appointment"}), 200
+    else:
+        return render_template('viewappointment.html',result=result)
 
 
 # 运行 Flask 应用
