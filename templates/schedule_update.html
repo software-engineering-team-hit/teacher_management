@@ -1,10 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <title>Update Teacher Schedule</title>
     <!-- 引入 jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #0055a5;
+            text-align: center;
+        }
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="date"],
+        input[type="time"],
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #0055a5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #004488;
+        }
+        button:active {
+            background-color: #003366;
+        }
+    </style>
+
 </head>
 <body>
 
@@ -38,7 +90,7 @@ $(document).ready(function() {
             time: $('#startTime').val() + ' - ' + $('#endTime').val(),
             event: $('#event').val()
         };
-        var teacher_name = '{{ teacher_name }}';
+        var teacher_email = '{{ email }}';
         // 将单个日程项放入数组中，以便与后端的预期格式匹配
         var scheduleData = {
             schedule: [scheduleItem]
@@ -46,7 +98,7 @@ $(document).ready(function() {
         // 发送 POST 请求到后端
 
         $.ajax({
-            url: '/teacher/' +encodeURIComponent(teacher_name) +'/schedule_update',
+            url: '/teacher/' +encodeURIComponent(teacher_email) +'/schedule_update',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(scheduleData),

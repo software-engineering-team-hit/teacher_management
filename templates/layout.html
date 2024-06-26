@@ -5,6 +5,72 @@
     <meta charset="UTF-8">
     <title>{{ title }}</title>
     <!-- 引入CSS样式或其他头部信息 -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background: #0055a5;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        header a {
+            color: white;
+            text-decoration: none;
+        }
+        header a:hover {
+            text-decoration: underline;
+        }
+        main {
+            padding: 20px;
+            background: white;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 20px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        /* 可以添加更多样式来美化内容区域，例如表格、按钮等 */
+        #appointmentsTable {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    #appointmentsTable thead {
+        background-color: #0055a5;
+        color: white;
+    }
+    #appointmentsTable th,
+    #appointmentsTable td {
+        padding: 10px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+    #appointmentsTable tbody tr:nth-child(odd) {
+        background-color: #f9f9f9;
+    }
+    #appointmentsTable tbody tr:hover {
+        background-color: #e9e9e9;
+    }
+    .accepted {
+        color: #4CAF50;
+    }
+    .pending {
+        color: #ff9800;
+    }
+    </style>
 </head>
 <body>
     <header>

@@ -4,76 +4,105 @@
     <meta charset="UTF-8">
     <title>教师查询系统</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 600px;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .search-form {
-            margin-top: 20px;
-        }
-        input[type="text"] {
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            width: calc(100% - 22px); /* Input padding and border */
-        }
-        .search-button {
-            background-color: #5cb85c;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .search-button:hover {
-            background-color: #4cae4c;
-        }
-         .teacher-list {
-            margin-top: 20px;
-            list-style: none;
-            padding: 0;
-        }
-        .teacher-item {
-            background: white;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .teacher-item h3 {
-            margin: 0 0 10px 0;
-            color: #333;
-        }
-        .teacher-item p {
-            margin: 5px 0;
-            font-size: 14px;
-        }
-        .teacher-item a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .teacher-item a:hover {
-            text-decoration: underline;
-        }
+       body {
+    font-family: 'Arial', sans-serif;
+    background: #fcffff; /* 浅蓝色背景 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.1); /* 蓝色阴影 */
+    width: 80%;
+    max-width: 600px;
+}
+
+h1 {
+    text-align: center;
+    color: #007bff; /* 深蓝色标题 */
+}
+
+.search-form {
+    margin-top: 20px;
+}
+
+input[type="text"] {
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: calc(100% - 22px);
+}
+
+.search-button {
+    background-color: #007bff; /* 深蓝色按钮 */
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.search-button:hover {
+    background-color: #66b2ff; /* 浅蓝色悬停效果 */
+}
+
+.teacher-list {
+    margin-top: 20px;
+    list-style: none;
+    padding: 0;
+}
+
+.teacher-item {
+    background: #f0f8ff; /* 浅蓝色背景 */
+    border: 1px solid #b3daff; /* 蓝色边框 */
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2); /* 蓝色阴影 */
+}
+
+.teacher-item h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.teacher-item p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333; /* 黑色文本 */
+}
+
+.teacher-item a {
+    color: #007bff; /* 深蓝色链接 */
+    text-decoration: none;
+}
+
+.teacher-item a:hover {
+    text-decoration: underline;
+}
+
+/* 其他按钮样式 */
+button {
+    background-color: #0055a5; /* 蓝色按钮 */
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+button:hover {
+    background-color: #007bff; /* 深蓝色悬停效果 */
+}
     </style>
 </head>
 <body>

@@ -1,10 +1,12 @@
-<!-- templates/viewappointment.html -->
 {% extends "layout.html" %}
-{% block title %}View Appointments{% endblock %}
+{% block title %}The Appointments{% endblock %}
 
 {% block content %}
-    <h1>My Appointments</h1>
-
+    <h1>The Appointments</h1>
+    <script>
+        // 存储模板变量的值
+        var user_email = '{{ email }}';
+    </script>
     {% if result|length == 0 %}
         <p>No appointments found.</p>
     {% else %}
@@ -15,10 +17,10 @@
                     <th>Student Email</th>
                     <th>Academy</th>
                     <th>Purpose</th>
-                    <th>Teacher ID</th>
                     <th>Date</th>
                     <th>Time</th>
                     <th>Status</th>
+                    <th>choice</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,7 +30,6 @@
                     <td>{{ appointment.studentEmail }}</td>
                     <td>{{ appointment.academy }}</td>
                     <td>{{ appointment.purpose }}</td>
-                    <td>{{ appointment.teacherId }}</td>
                     <td>{{ appointment.date }}</td>
                     <td>{{ appointment.time }}</td>
                     <td class="{{ 'accepted' if appointment.is_accepted else 'pending' }}">
@@ -36,11 +37,36 @@
                             Accepted
                         {% else %}
                             Pending
-                        {% endif %}
-                    </td>
+                        {% endif %}</td>
+                    <td><button onclick="accept({{ appointment.appointment_id }} )" >Accept</button></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% endif %}
 {% endblock %}
+<script>
+    function  accept(appointment_id) {
+        fetch(`/accept-appointment/${user_email}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({'appointment':appointment_id})
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Appointment accepted:', data);
+                // 可以在页面上更新预约状态
+                // 这里需要添加代码来找到对应的预约元素并更新它的 is_accepted 状态
+            })
+            .catch(error => {
+                console.error('Error accepting appointment:', error);
+            });
+    }
+</script>

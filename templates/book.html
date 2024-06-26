@@ -5,6 +5,62 @@
     <title>Appointment</title>
     <!-- 引入 jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            text-align: center;
+            color: #0055a5;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        textarea {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        textarea {
+            resize: vertical;
+        }
+        #bookTeacher {
+            background-color: #0055a5;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        #bookTeacher:hover {
+            background-color: #004488;
+        }
+        #bookTeacher:active {
+            background-color: #003366;
+        }
+    </style>
 </head>
 <body>
 
@@ -13,7 +69,10 @@
 <form id="bookForm">
     <label for="studentName">Student Name:</label>
     <input type="text" id="studentName" name="studentName" required>
-    
+
+    <label for="studentEmail">Student Email:</label>
+    <input type="email" id="studentEmail" name="studentEmail" required>
+
     <label for="academy">Academy:</label>
     <input type="text" id="academy" name="academy" required>
     
@@ -25,7 +84,7 @@
     
     <label for="time">Time:</label>
     <input type="time" id="time" name="time" required>
-    
+
     <input type="hidden" id="teacher_id" name="teacher_id" value="1">
     <button type="submit" id="bookTeacher">Book Appointment</button>
 </form>
@@ -39,11 +98,12 @@
             // 获取表单数据
             var bookItem = {
                 studentName: $('#studentName').val(),
+                studentEmail:$('#studentEmail').val(),
                 academy: $('#academy').val(),
                 purpose: $('#purpose').val(),
                 date: $('#date').val(),
                 time: $('#time').val(),
-                teacherId: $('#teacherId').val(),
+                teacherId: $('#teacher_id').val(),
             };
     
     

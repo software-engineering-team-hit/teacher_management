@@ -41,6 +41,14 @@
             box-sizing: border-box;
             width: calc(100% - 22px); /* Input padding and border */
         }
+        input[type="email"] {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            width: calc(100% - 22px); /* Input padding and border */
+        }
         input[type="submit"],
         input[type="reset"] {
             background-color: #5cb85c;
@@ -69,7 +77,8 @@
                 academy: $('#academy').val(),
                 info: $('#info').val(),
                 name: $('#name').val(),
-                url: $('#url').val()
+                url: $('#url').val(),
+                email:$('#email').val()
             };
 
             // 使用 AJAX 发送 POST 更新请求到 /update-teacher-info 路由
@@ -107,6 +116,9 @@
     <!-- 姓名 -->
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" value="your name" required><br>
+
+     <label for="email">Email:</label>
+    <input type="email" id="email" name="email" value="your email" required><br>
 
     <!-- 个人主页URL -->
     <label for="url">URL:</label>

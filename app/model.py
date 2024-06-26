@@ -36,6 +36,13 @@ class Teacher:
         return [teachers.get(id)]
 
     @classmethod
+    def get_teacher_by_email(cls, email, teachers_data):
+        for teacher in teachers_data:
+            if teacher['email']==email:
+                return teacher
+
+
+    @classmethod
     def get_teacher_by_name(cls, name, teachers_data):
         if name==" ":
             return teachers_data;
@@ -95,8 +102,9 @@ class Teacher:
 #teachers = Teacher.load_teachers()
 #print(Teacher.get_teacher_by_academy("计算学部",teachers))
 class Appointment:
-    def __init__(self, student_name, academy, purpose, teacher_id, date, time, is_accepted=False):
+    def __init__(self, student_name,student_email, academy, purpose, teacher_id, date, time, is_accepted=False):
         self.student_name = student_name
+        self.student_email = student_email
         self.academy = academy
         self.purpose = purpose
         self.teacher_id = teacher_id
