@@ -3,6 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>Teacher Schedule</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #0055a5;
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #e9ecef;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        strong {
+            color: #0055a5;
+        }
+        .date, .time, .event {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .date {
+            font-weight: bold;
+        }
+        .no-schedule {
+            text-align: center;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
 
@@ -12,14 +51,14 @@
     <ul>
     {% for item in schedule %}
         <li>
-            <strong>Date:</strong> {{ item.date }}<br>
-            <strong>Time:</strong> {{ item.time }}<br>
-            <strong>Event:</strong> {{ item.event }}
+            <div class="date">{{ item.date }}</div>
+            <div class="time">{{ item.time }}</div>
+            <div class="event">{{ item.event }}</div>
         </li>
     {% endfor %}
     </ul>
 {% else %}
-    <p>No schedule information available.</p>
+    <p class="no-schedule">No schedule information available.</p>
 {% endif %}
 
 </body>

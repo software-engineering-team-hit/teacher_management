@@ -8,25 +8,30 @@
     {% if result|length == 0 %}
         <p>No appointments found.</p>
     {% else %}
-        <table border="1">
-            <tr>
-                <th>Student Name</th>
-                <th>Academy</th>
-                <th>Purpose</th>
-                <th>Teacher ID</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Status</th>
-            </tr>
-            {% for appointment in result %}
+        <table id="appointmentsTable">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Student Email</th>
+                    <th>Academy</th>
+                    <th>Purpose</th>
+                    <th>Teacher ID</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in result %}
                 <tr>
                     <td>{{ appointment.studentName }}</td>
+                    <td>{{ appointment.studentEmail }}</td>
                     <td>{{ appointment.academy }}</td>
                     <td>{{ appointment.purpose }}</td>
                     <td>{{ appointment.teacherId }}</td>
                     <td>{{ appointment.date }}</td>
                     <td>{{ appointment.time }}</td>
-                    <td>
+                    <td class="{{ 'accepted' if appointment.is_accepted else 'pending' }}">
                         {% if appointment.is_accepted %}
                             Accepted
                         {% else %}
@@ -34,7 +39,8 @@
                         {% endif %}
                     </td>
                 </tr>
-            {% endfor %}
+                {% endfor %}
+            </tbody>
         </table>
     {% endif %}
 {% endblock %}

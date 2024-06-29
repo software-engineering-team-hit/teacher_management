@@ -12,30 +12,46 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            transition: background-color 0.3s ease;
         }
         .options-container {
             text-align: center;
             background: white;
             padding: 30px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
         }
         h1 {
-            color: #333;
+            color: #0055a5;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 20px;
         }
         .option-button {
             display: block;
+            width: 100%;
             margin: 10px 0;
-            padding: 10px;
-            background: #007ff;
+            padding: 12px;
+            background: #0055a5;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
         }
         .option-button:hover {
-            background: #0056b3;
+            background: #004488;
+        }
+        .option-button:active {
+            background: #003366;
+        }
+        form {
+            display: inline-block;
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -43,17 +59,16 @@
     <div class="options-container">
         <h1>Welcome!</h1>
         <p>Please choose an option below to continue.</p>
+        <!-- Register button -->
         <form id="registerForm" action="/register" method="GET">
-        <button type="submit">Register</button>
-    </form>
+            <a href="/register" class="option-button">Register</a>
+        </form>
 
-    <!-- 登录按钮 -->
-    <form id="loginForm" action="/login" method="GET">
-        <button type="submit">Login</button>
-    </form>
-        <!-- Option buttons should be here -->
+        <!-- Login button -->
+        <form id="loginForm" action="/login" method="GET">
+            <a href="/login" class="option-button">Login</a>
+        </form>
     </div>
 </body>
 </html>
-
 

@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+{% block title %}The Appointments{% endblock %}
+
+{% block content %}
+    <h1>The Appointments</h1>
+    <script>
+        // 存储模板变量的值
+         var email = '{{ email }}';
+    </script>
+    {% if result|length == 0 %}
+        <p>No appointments found.</p>
+    {% else %}
+        <table id="appointmentsTable">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Student Email</th>
+                    <th>Academy</th>
+                    <th>Purpose</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>choice</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in result %}
+                <tr>
+                    <td>{{ appointment.studentName }}</td>
+                    <td>{{ appointment.studentEmail }}</td>
+                    <td>{{ appointment.academy }}</td>
+                    <td>{{ appointment.purpose }}</td>
+                    <td>{{ appointment.date }}</td>
+                    <td>{{ appointment.time }}</td>
+                    <td class="{{ 'accepted' if appointment.is_accepted else 'pending' }}">
+                        {% if appointment.is_accepted %}
+                            Accepted
+                        {% else %}
+                            Pending
+                        {% endif %}</td>
+                    <td>
+                        <form action="/accept-appointment/{{ email }}" method="post">
+                            <input type="hidden" name="appointment_id" value="{{ appointment.appointment_id }}">
+                            <input type="submit" value="Accept">
+                            <!-- <input type="submit" value="Accept"onclick="event.preventDefault(); accept({{ appointment.appointment_id }})"> -->
+                        </form>
+                    </td> 
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <!-- 消息显示区域 -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div id="flashed-messages">
+                {% for category, message in messages %}
+                    <div class="{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+{% endblock %}
+<script>
+    function showMessage(message) {
+    alert(message); // 使用alert显示弹窗，你也可以使用其他弹窗库，比如SweetAlert
+    }
+    
+    function accept(appointment_id) {
+        // 创建一个请求到服务器，接受预约
+        document.write("hello")
+        const data = {
+                appointment_id: appointment_id
+        };
+
+        fetch(`/accept-appointment/${email}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+
+            },
+            body: 'appointment_id=' + encodeURIComponent(appointment_id)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.message) {
+            alert(data.message); // 显示后端返回的信息
+            }
+        })
+        .catch(error => {
+            console.error('Error accepting appointment:', error);
+            alert('An error occurred while accepting the appointment.');
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+        // fetch(`/accept-appointment/${email}`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify({'appointment':appointment_id})
+        // })
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             throw new Error('Network response was not ok');
+        //         }
+        //         return response.json();
+        //     })
+        //     .then(data => {
+        //         console.log('Appointment accepted:', data);
+        //         // 可以在页面上更新预约状态
+        //         // 这里需要添加代码来找到对应的预约元素并更新它的 is_accepted 状态
+        //     })
+        //     .catch(error => {
+        //         console.error('Error accepting appointment:', error);
+        //     });
+    }
+</script>

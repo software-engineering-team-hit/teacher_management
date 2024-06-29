@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify,session,flash
+from flask import Flask, render_template, request, redirect, url_for, jsonify,session,flash,abort
 import json
 import os
+import  time
 from werkzeug.security import generate_password_hash, check_password_hash
-app = Flask(__name__,template_folder='E:\\csnerwork\\teacher_management\\templates')
+app = Flask(__name__,template_folder='F:\\2024_code\\software\\teacher_management1\\teacher_management\\templates')
 app.secret_key = 'teachermanagement'
 from model import Teacher,Appointment
 # 假设这是你的登录和注册页面模板
@@ -15,25 +16,28 @@ def index():
 def teacher():
     user_name = session.get('username', 'Guest')  # 如果没有找到name，默认为'Guest'
     user_identify = session.get('identify', 'Unknown')  # 如果没有找到
+    user_email = session.get('email','Unknown')
     error_message = request.args.get('error')
-    return render_template('teacher.html', name=user_name, identify=user_identify, error_message=error_message)
+    return render_template('teacher.html', name=user_name, identify=user_identify,email=user_email, error_message=error_message)
 # 登录路由
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    with open('E:\\csnerwork\\teacher_management\\register_users.json', 'r') as f:
+    with open('F:\\2024_code\\software\\teacher_management1\\teacher_management\\register_users.json', 'r') as f:
         users = json.load(f)
     if request.method == 'POST':
         data = request.get_json()
         username = data.get('username')
+        email = data.get('email')
         password = data.get('password')
 
         # 查找用户是否存在
-        user = next((u for u in users if u['username'] == username), None)
+        user = next((u for u in users if u['email'] == email), None)
         print(user)
 
         if user and check_password_hash(user['password'], password):
             session['username'] = username
             session['identify'] = user['identify']
+            session['email']=user['email']
             # 登录成功,返回成功信息
             if session['identify'] =="teacher":
                 return jsonify({'message': 'login successful,teacher'}), 200
@@ -81,7 +85,7 @@ def register():
             }
 
             try:
-                with open('E:\\csnerwork\\teacher_management\\register_users.json', 'r') as f:
+                with open('F:\\2024_code\\software\\teacher_management1\\teacher_management\\register_users.json', 'r') as f:
                     users = json.load(f)
             except FileNotFoundError:
                 users = []
@@ -92,7 +96,7 @@ def register():
             users.append(user_data)
 
             try:
-                with open('E:\\csnerwork\\teacher_management\\register_users.json', 'w') as f:
+                with open('F:\\2024_code\\software\\teacher_management1\\teacher_management\\register_users.json', 'w') as f:
                     json.dump(users, f)
             except FileNotFoundError:
                 print("Error: Unable to write to register_users.json file")
@@ -109,8 +113,9 @@ def register():
 def menu():
     user_name = session.get('username', 'Guest')  # 如果没有找到name，默认为'Guest'
     user_identify = session.get('identify', 'Unknown')  # 如果没有找到
+    user_email =session.get('email','Unknown')
     error_message = request.args.get('error')
-    return render_template('menu.html', name=user_name, identify=user_identify, error_message=error_message)
+    return render_template('menu.html', name=user_name, identify=user_identify, email=user_email , error=error_message)
 
 # 搜索路由
 @app.route('/search')
@@ -152,26 +157,29 @@ def update_teacher():
         # 用户是老师，允许访问更新页面
         teachers = Teacher.load_teachers()
         if request.method == 'POST':
-            id = int(request.form['id'])
+            data = request.json
+            id = int(data.get('id'))    
             new = 1
-            name = request.form['name']
-            academy = request.form['academy']
-            url = request.form['url']
-            information = request.form['info']
+            name = data.get('name')
+            academy = data.get('academy')
+            url = data.get('url')
+            information = data.get('info')
+            email=data.get('email')
             # 找到要更新的教师对象
             for teacher in teachers:
-                if str(teacher["id"]) == str(id):
+                if str(teacher["email"]) == str(email):
                     print("成功匹配")
                     teacher["name"] = name
                     teacher["academy"] = academy
                     teacher["url"] = url
                     teacher['information'] = information
+                    teacher['email']=email
                     new = 0
                     break
             if new == 0:
-                if 'name' in session and session['username'] == name:
+                if 'email' in session and session['email'] == email:
                     Teacher.save_teachers(teachers)
-                    return jsonify({"success": "update successfully"}), 200
+                    return jsonify({"message": "update successfully"}), 203
             else:
                 teacher1 = {}
                 teacher1["id"] = int(id)
@@ -180,6 +188,7 @@ def update_teacher():
                 teacher1["url"] = url
                 teacher1['information'] = information
                 teacher1['times'] = str(0)
+                teacher1['email'] = email
                 teachers.append(teacher1)
                 print(teachers)
                 Teacher.save_teachers(teachers)
@@ -188,7 +197,15 @@ def update_teacher():
             # 保存更新后的教师数据
 
         else:
-            return render_template('update.html')  # return redirect(url_for('index'))
+            for teacher in teachers:
+                if teacher["email"] == session['email']:
+                    teacher_update=teacher
+                    print("要更新的教师信息")
+                    print(teacher_update)
+                    break
+            teacher_information=teacher_update['information']
+            print(teacher_information)
+            return render_template('update.html',teacher_update=teacher_update,teacher_information=teacher_information)  # return redirect(url_for('index'))
     else:
         # 用户不是老师或者没有登录，显示错误消息并重定向
         return redirect(url_for('menu', error='no_permission'))
@@ -202,15 +219,17 @@ def book_teacher(teacher_id):
         # 检查时间冲突的逻辑（已注释）
         # if Appointment.check_conflict(teacher_id, data.get('date'), data.get('time')):
         #     return jsonify({"error": "Time conflict, please choose another time"}), 409
-
+        appointment_id = str(int(time.time() * 1000))
         # 构造字典
         appointment_dict = {
             'studentName': data.get('studentName'),
+            'studentEmail':data.get('studentEmail'),
             'academy': data.get('academy'),
             'purpose': data.get('purpose'),
             'teacherId': teacher_id,
             'date': data.get('date'),
             'time': data.get('time'),
+            'appointment_id':appointment_id,
             'is_accepted': False
         }
         print(appointment_dict)
@@ -227,7 +246,7 @@ def book_teacher(teacher_id):
         return jsonify({"message": "预约信息已经发给教师，等待确认", "appointment": appointment_dict}), 201
 
     else:
-        return render_template('book.html')
+        return render_template('book.html',teacher_id=teacher_id)
 @app.route('/teacher/<int:teacher_id>/schedule', methods=['GET'])
 def get_teacher_schedule(teacher_id):
     teachers = Teacher.load_teachers()
@@ -241,44 +260,132 @@ def get_teacher_schedule(teacher_id):
 
     else:
         return jsonify({"error": "Teacher not found"}), 404
-@app.route('/teacher/<string:teacher_name>/schedule_update', methods=['GET', 'POST'])
-def update_teacher_schedule(teacher_name):
+@app.route('/teacher/<string:email>/schedule_update', methods=['GET', 'POST'])
+def update_teacher_schedule(email):
     user_name = session.get('username', 'Guest')  # 如果没有找到name，默认为'Guest'
     user_identify = session.get('identify', 'Unknown')  # 如果没有找到
+    user_email =session.get('email','Unknown')
     error_message = request.args.get('error')
     teachers = Teacher.load_teachers()
     if request.method == 'POST':
-        teacher = Teacher.get_teacher_by_name(user_name, teachers)
+        teacher = Teacher.get_teacher_by_email(user_email, teachers)
+        print(teacher)
         if teacher:
             # 假设请求的数据格式是 {'schedule': [{'date': '...', 'time': '...', 'event': '...'}]}
             data = request.json
-            if 'schedule' in teacher[0]:
+            if 'schedule' in teacher:
                 schedule_teacher=data.get('schedule')
-                teacher[0]['schedule'].append(schedule_teacher[0])
+                teacher['schedule'].append(schedule_teacher[0])
                 Teacher.save_teachers(teachers)
                 return jsonify({"message": "Schedule updated successfully"}), 200
             else:
-                teacher[0]['schedule'] = data.get('schedule')
+                teacher['schedule'] = data.get('schedule')
                 Teacher.save_teachers(teachers)
                 return jsonify({"message": "Schedule updated successfully"}), 200
         else:
             return jsonify({"error": "Teacher not found"}), 404
     else:
-        return render_template('schedule_update.html',teacher_name=user_name, identify=user_identify, error_message=error_message)
-@app.route('/menu/<string:student_name>/viewappointment', methods=['GET', 'POST'])
-def view(student_name):
+        return render_template('schedule_update.html',teacher_name=user_name, identify=user_identify,email=user_email, error_message=error_message)
+    
+
+@app.route('/menu/<string:student_email>/viewappointment', methods=['GET', 'POST'])
+def view(student_email):
     user_name = session.get('username', 'Guest')  # 如果没有找到name，默认为'Guest'
     user_identify = session.get('identify', 'Unknown')  # 如果没有找到
     error_message = request.args.get('error')
+    user_email=session.get('email','Unknown')
     all = Appointment.load_appointments()
     result = []
     for each in all:
-        if each["studentName"] == user_name:
+        if each["studentEmail"] == user_email:
             result.append(each)
     if result==[]:
         return jsonify({"message": "no appointment"}), 200
     else:
         return render_template('viewappointment.html',result=result)
+
+
+@app.route('/get-appointments/<string:teacheremail>', methods=['GET'])
+def get_appointments(teacheremail):
+    # user_email=session.get('email')
+    appointments_load=Appointment.load_appointments()
+    teacher_data = Teacher.load_teachers()
+    # 过滤出当前教师的预约信息
+    if request.method=='GET':
+        appointments = []
+        teacher_id = Teacher.get_teacher_by_email(teacheremail, teacher_data)['id']
+        print("teacher_id:",teacher_id)
+        new = 0
+        for app in appointments_load:
+            if app["teacherId"] == teacher_id:
+                appointments.append(app)
+                if app["is_accepted"] == False:
+                    new = 1
+        # 检查是否有新的预约
+        if new == 1:
+            print("有未确认的预约信息")
+            # 更新上一次的预约列表
+            print(appointments)
+        return render_template('teacher_check.html', email=teacheremail, result=appointments)
+    # if request.method=='POST':
+    #     data = request.get_json()
+    #     teacher_data = Teacher.load_teachers()
+    #     appointment_id = data.get('appointment_id')
+    #     teacher_id = Teacher.get_teacher_by_email(user_email, teacher_data)['id']
+    #     print("appointment_id:", appointment_id)
+    #     appointments = Appointment.load_appointments()
+    #     for appointment in appointments:
+    #         if appointment['appointment_id'] == appointment_id and appointment['teacherId'] == teacher_id:
+    #             appointment['is_accepted'] = True
+    #             break
+    #     else:
+    #         # 如果预约不存在或不属于该教师
+    #         abort(404, description="Appointment not found or does not belong to the teacher")
+
+    #     Appointment.save_appointment(appointments)
+
+    #     return jsonify({"message": "Appointment accepted successfully"})
+
+
+
+@app.route('/accept-appointment/<string:teacheremail>', methods=['POST'])
+def accept_appointment(teacheremail):
+    #data = request.get_json()
+    # teacher_data=Teacher.load_teachers()
+    appointment_id = request.form.get('appointment_id')
+    # and appointment['teacherId'] == teacher_id
+    # teacher_id = Teacher.get_teacher_by_email(teacheremail,teacher_data)['id']
+    print("appointment_id:",appointment_id)
+    appointments = Appointment.load_appointments()
+    for appointment in appointments:
+        if appointment['appointment_id'] == appointment_id :
+            if appointment['is_accepted'] != True:
+                appointment['is_accepted'] = True
+                # 操作成功后，使用flash发送消息
+                flash('Appointment accepted successfully', 'success')
+                break
+            elif appointment['is_accepted'] == True:
+                flash('Appointment has been accepted ', 'success')
+                break
+
+    else:
+        # 如果预约不存在或不属于该教师
+        abort(404, description="Appointment not found or does not belong to the teacher")
+
+    Appointment.save_appointment(appointments)
+
+
+    # user_email=session.get('email')
+    appointments_load=Appointment.load_appointments()
+    teacher_data = Teacher.load_teachers()
+    appointments = []
+    teacher_id = Teacher.get_teacher_by_email(teacheremail, teacher_data)['id']
+    print("teacher_id:",teacher_id)
+    new = 0
+    for app in appointments_load:
+        if app["teacherId"] == teacher_id:
+            appointments.append(app)  
+    return render_template('teacher_check.html', email=teacheremail, result=appointments)
 
 
 # 运行 Flask 应用
